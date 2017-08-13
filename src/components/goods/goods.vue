@@ -18,7 +18,8 @@
     <div class="foods-wrapper" ref="foodsWrapper">
       <ul>
         <li v-for="item in goods"
-            class="food-list food-list-hook">
+            class="food-list"
+            ref="foodList">
           <h1 class="title">{{item.name}}</h1>
           <ul>
             <li v-for="food in item.foods"
@@ -41,7 +42,7 @@
                         >¥{{food.oldPrice}}</span>
                 </div>
                 <div class="cartcontrol-wrapper">
-                  <cartcontrol :food="food"></cartcontrol>
+                  <cartcontrol @add="addFood" :food="food"></cartcontrol>
                 </div>
               </div>
             </li>
@@ -54,7 +55,8 @@
               :delivery-price="seller.deliveryPrice"
               :min-price="seller.minPrice"
               ></shopcart>
-    <food :food="selectedFood"
+    <food @add="addFood"
+          :food="selectedFood"
           ref="food"></food>
   </div>
 </template>
@@ -129,7 +131,7 @@
         if (!event._constructed) {
           return
         }
-        let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook')
+        let foodList = this.$refs.foodList
         let el = foodList[index]
         this.foodsScroll.scrollToElement(el, 200)
       },
@@ -139,6 +141,9 @@
         }
         this.selectedFood = food
         this.$refs.food.show()
+      },
+      addFood (target) {
+        this._drop(target)
       },
       _drop (target) {
         // 体验优化，异步执行下落动画
@@ -160,7 +165,7 @@
         })
       },
       _calculateHeight () {
-        let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook')
+        let foodList = this.$refs.foodList
         let height = 0
         this.listHeight.push(height)
 
@@ -175,11 +180,6 @@
       shopcart,
       cartcontrol,
       food
-    },
-    events: {
-      'cart.add' (target) {
-        this._drop(target)
-      }
     }
   }
 </script>

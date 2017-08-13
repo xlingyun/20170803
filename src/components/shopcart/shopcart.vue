@@ -22,23 +22,24 @@
           </div>
         </div>
       </div>
-      <transition
-        v-on:before-enter="beforeEnter"
-        v-on:enter="enter"
-        v-on:leave="leave"
-        v-bind:css="false">
-        <div class="ball-container">
-          <div v-for="ball in balls"
-               v-show="ball.show"
-               class="ball">
-            <div class="inner inner-hook"></div>
-          </div>
+
+      <div class="ball-container">
+        <div v-for="ball in balls">
+          <transition
+            name="drop"
+            @before-enter="beforeDrop"
+            @enter="dropping"
+            @after-enter="afterDrop">
+            <div class="ball" v-show="ball.show">
+              <div class="inner inner-hook"></div>
+            </div>
+          </transition>
         </div>
-      </transition>
+      </div>
 
       <transition name="fold">
         <div class="shopcart-list"
-           v-show="listShow">
+             v-show="listShow">
           <div class="list-header">
             <h1 class="title">购物车</h1>
             <span class="empty" @click="empty">清空</span>
@@ -52,7 +53,7 @@
                       <span>¥{{food.price*food.count}}</span>
                     </div>
                     <div class="cartcontrol-wrapper">
-                      <cartcontrol :food="food"></cartcontrol>
+                      <cartcontrol @add="addFood" :food="food"></cartcontrol>
                     </div>
                   </li>
             </ul>
@@ -77,7 +78,12 @@
       selectFoods: {
         type: Array,
         default () {
-          return []
+          return [
+            {
+              price: 10,
+              count: 1
+            }
+          ]
         }
       },
       deliveryPrice: {
@@ -196,9 +202,12 @@
         }
         window.alert(`支付${this.totalPrice}元`)
       },
-      beforeEnter: function (el) {
+      addFood (target) {
+        this.drop(target)
+      },
+      beforeDrop (el) {
         let count = this.balls.length
-        while (--count) {
+        while (count--) {
           let ball = this.balls[count]
           if (ball.show) {
             let rect = ball.el.getBoundingClientRect()
@@ -213,7 +222,7 @@
           }
         }
       },
-      enter: function (el) {
+      dropping (el, done) {
         /* eslint-disable no-unused-vars */
         let rf = el.offsetHeight
         this.$nextTick(() => {
@@ -222,9 +231,10 @@
           let inner = el.getElementsByClassName('inner-hook')[0]
           inner.style.webkitTransform = 'translate3d(0, 0, 0)'
           inner.style.transform = 'translate3d(0, 0, 0)'
+          el.addEventListener('transitionend', done)
         })
       },
-      leave: function (el) {
+      afterDrop (el) {
         let ball = this.dropBalls.shift()
         if (ball) {
           ball.show = false
@@ -302,9 +312,8 @@
           vertical-align: top
           margin-top: 12px
           line-height: 24px
-          padding-right: 24px
+          padding-right: 12px
           box-sizing: border-box
-          color: rgba(255, 255, 255, .4)
           border-right: 1px solid rgba(255, 255, 255, .1)
           font-size: 16px
           font-weight: 700
@@ -315,7 +324,7 @@
           vertical-align: top
           line-height: 24px
           margin: 12px 0 0 12px
-          font-size: 14px
+          font-size: 10px
       .content-right
         flex: 0 0 105px
         width: 105px
@@ -329,7 +338,7 @@
           &.not-enough
             background: #2b333b
           &.enough
-            background: #00b430
+            background: #00b43c
             color: #fff
     .ball-container
       .ball
@@ -337,14 +346,13 @@
         left: 32px
         bottom: 22px
         z-index: 200
-        &.drop-enter-active
-          transition: all 0.4s cubic-bezier(0.49, -0.29, 0.75, 0.41)
-          .inner
-            width: 16px
-            height: 16px
-            border-radius: 50%
-            background: rgb(0, 160, 220)
-            transition: all 0.4s linear
+        transition: all 0.4s cubic-bezier(0.49, -0.29, 0.75, 0.41)
+        .inner
+          width: 16px
+          height: 16px
+          border-radius: 50%
+          background: rgb(0, 160, 220)
+          transition: all 0.4s linear
     .shopcart-list
       position: absolute
       left: 0
@@ -404,10 +412,10 @@
     height: 100%
     z-index: 40
     backdrop-filter: blur(10px)
+    opacity: 1
     background: rgba(7, 17, 27, .6)
     &.fade-enter-active, &.fade-leave-active
       transition: all 0.5s
-      opacity: 1
     &.fade-enter, &.fade-leave-to
       opacity: 0
       background: rgba(7, 17, 27, 0)

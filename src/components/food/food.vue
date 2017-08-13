@@ -21,7 +21,7 @@
                   v-show="food.oldPrice">¥{{food.oldPrice}}</span>
           </div>
           <div class="cartcontrol-wrapper">
-            <cartcontrol :food="food"></cartcontrol>
+            <cartcontrol @add="addFood" :food="food"></cartcontrol>
           </div>
           <transition name="fade">
             <div class="buy"
@@ -39,11 +39,30 @@
       <div class="rating">
         <h1 class="title">商品评价</h1>
         <ratingselect
-          :select-type="selectType"
-          :only-content="onlyContent"
+          :selectType="selectType"
+          :onlyContent="onlyContent"
           :desc="desc"
           :ratings="food.ratings"
           ></ratingselect>
+      </div>
+      <div class="rating-wrapper">
+        <ul v-show="food.ratings && food.rating.length">
+          <li v-for="rating in food.ratings"
+              class="rating-item">
+                <div class="user">
+                  <span class="name">{{rating.username}}</span>
+                  <img class="avatar"
+                       width="12"
+                       height="12"
+                       :src="rating.avatar">
+                </div>
+                <p class="text">
+                  <span :class="{'icon-thumb_up': rating.rateType===0, 'icon-thumb_down': rating.rateType===1}"></span>
+                </p>
+              </li>
+        </ul>
+        <div class="no-rating"
+             v-show="!food.ratings || !food.ratings.length"></div>
       </div>
     </div>
   </transition>
@@ -55,8 +74,6 @@
   import split from 'components/split/split'
   import ratingselect from 'components/ratingselect/ratingselect'
 
-  // const POSITIVE = 0
-  // const NEGATIVE = 1
   const ALL = 2
 
   export default {
@@ -99,8 +116,11 @@
         if (!event._constructed) {
           return
         }
-        this.$emit('cart.add', event.target)
+        this.$emit('add', event.target)
         Vue.set(this.food, 'count', 1)
+      },
+      addFood (target) {
+        this.$emit('add', target)
       }
     },
     components: {
@@ -213,4 +233,5 @@
         line-height: 14px
         margin-left: 18px
         font-size: 14px
+        color: rgb(7, 17, 27)
 </style>
