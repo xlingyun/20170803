@@ -33,7 +33,7 @@
                 </div>
                 <div class="price">
                   <span class="now"><i class="money">¥</i>{{food.price}}</span>
-                  <span v-if="food.oldPrice" 
+                  <span v-if="food.oldPrice"
                         class="old"
                         >¥{{food.oldPrice}}</span>
                 </div>
@@ -46,9 +46,11 @@
         </li>
       </ul>
     </div>
-    <shopcart :delivery-price="seller.deliveryPrice" 
+    <shopcart ref="shopcart"
+              :selectFoods="selectFoods"
+              :delivery-price="seller.deliveryPrice"
               :min-price="seller.minPrice"
-              ></shopcart>  
+              ></shopcart>
   </div>
 </template>
 
@@ -83,6 +85,17 @@
           }
         }
         return 0
+      },
+      selectFoods () {
+        let foods = []
+        this.goods.forEach((good) => {
+          good.foods.forEach((food) => {
+            if (food.count) {
+              foods.push(food)
+            }
+          })
+        })
+        return foods
       }
     },
     created () {
@@ -113,6 +126,12 @@
         let el = foodList[index]
         this.foodsScroll.scrollToElement(el, 200)
       },
+      _drop (target) {
+        // 体验优化，异步执行下落动画
+        this.$nextTick(() => {
+          this.$refs.shopcart.drop(target)
+        })
+      },
       _initScroll () {
         this.menuScroll = new BScroll(this.$refs.menuWrapper, {
           click: true
@@ -141,6 +160,11 @@
     components: {
       shopcart,
       cartcontrol
+    },
+    events: {
+      'cart.add' (target) {
+        this._drop(target)
+      }
     }
   }
 </script>
