@@ -25,44 +25,45 @@
           </div>
           <transition name="fade">
             <div class="buy"
-               v-show="!food.count || food.count === 0"
-               @click.stop.prevent="addFirst">加入购物车</div>
+                 v-show="!food.count || food.count === 0"
+                 @click.stop.prevent="addFirst">加入购物车
+            </div>
           </transition>
         </div>
-      </div>
-      <split></split>
-      <div class="info" v-show="food.info">
-        <h1 class="title">商品信息</h1>
-        <p class="text">{{food.info}}</p>
-      </div>
-      <split v-show="food.info"></split>
-      <div class="rating">
-        <h1 class="title">商品评价</h1>
-        <ratingselect
-          :selectType="selectType"
-          :onlyContent="onlyContent"
-          :desc="desc"
-          :ratings="food.ratings"
+        <split></split>
+        <div class="info" v-show="food.info">
+          <h1 class="title">商品信息</h1>
+          <p class="text">{{food.info}}</p>
+        </div>
+        <split v-show="food.info"></split>
+        <div class="rating">
+          <h1 class="title">商品评价</h1>
+          <ratingselect
+            :selectType="selectType"
+            :onlyContent="onlyContent"
+            :desc="desc"
+            :ratings="food.ratings"
           ></ratingselect>
-      </div>
-      <div class="rating-wrapper">
-        <ul v-show="food.ratings && food.rating.length">
-          <li v-for="rating in food.ratings"
-              class="rating-item">
-                <div class="user">
-                  <span class="name">{{rating.username}}</span>
-                  <img class="avatar"
-                       width="12"
-                       height="12"
-                       :src="rating.avatar">
-                </div>
-                <p class="text">
-                  <span :class="{'icon-thumb_up': rating.rateType===0, 'icon-thumb_down': rating.rateType===1}"></span>
-                </p>
-              </li>
-        </ul>
-        <div class="no-rating"
-             v-show="!food.ratings || !food.ratings.length"></div>
+        </div>
+        <div class="rating-wrapper">
+          <ul v-show="food.ratings && food.rating.length">
+            <li v-for="rating in food.ratings"
+                class="rating-item">
+              <div class="user">
+                <span class="name">{{rating.username}}</span>
+                <img class="avatar"
+                     width="12"
+                     height="12"
+                     :src="rating.avatar">
+              </div>
+              <p class="text">
+                <span :class="{'icon-thumb_up': rating.rateType===0, 'icon-thumb_down': rating.rateType===1}"></span>
+              </p>
+            </li>
+          </ul>
+          <div class="no-rating"
+               v-show="!food.ratings || !food.ratings.length"></div>
+        </div>
       </div>
     </div>
   </transition>
@@ -73,9 +74,9 @@
   import Vue from 'vue'
   import split from 'components/split/split'
   import ratingselect from 'components/ratingselect/ratingselect'
-
+  
   const ALL = 2
-
+  
   export default {
     props: {
       food: {
@@ -100,12 +101,15 @@
         this.selectType = ALL
         this.onlyContent = true
         this.$nextTick(() => {
+          console.log('ok')
           if (!this.scroll) {
+            console.log(this.$refs.food)
             this.scroll = new BScroll(this.$refs.food, {
               click: true
             })
           } else {
             this.scroll.refresh()
+            console.log('error')
           }
         })
       },
@@ -143,7 +147,7 @@
     &.move-enter-active, &.move-leave-active
       transition: all 0.2s linear
     &.move-enter, &.move-leave-to
-      transform:translate3d(100%, 0, 0)
+      transform: translate3d(100%, 0, 0)
     .image-header
       position: relative
       width: 100%
@@ -176,6 +180,7 @@
       .detail
         margin-bottom: 18px
         line-height: 10px
+        height: 10px
         font-size: 0
         .sell-count, .rating
           font-size: 10px
@@ -205,6 +210,7 @@
         height: 24px
         line-height: 24px
         padding: 0 12px
+        box-sizing: border-box
         border-radius: 12px
         font-size: 10px
         color: #fff
@@ -221,7 +227,7 @@
         margin-right: 6px
         font-size: 14px
         margin-bottom: 6px
-        color: rgb(7, 17 ,27)
+        color: rgb(7, 17, 27)
       .text
         font-size: 12px
         line-height: 24px
