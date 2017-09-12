@@ -51,6 +51,7 @@
           <ul v-show="food.ratings && food.ratings.length">
             <li v-for="rating in food.ratings"
                 v-show="needShow(rating.rateType, rating.text)"
+
                 class="rating-item">
               <div class="user">
                 <span class="name">{{rating.username}}</span>
@@ -77,13 +78,13 @@
 <script type="text/ecmascript-6">
   import BScroll from 'better-scroll'
   import cartcontrol from 'components/cartcontrol/cartcontrol'
+  import {formatTime} from 'common/js/date'
   import Vue from 'vue'
   import split from 'components/split/split'
   import ratingselect from 'components/ratingselect/ratingselect'
-  import moment from 'moment'
-  
+
   const ALL = 2
-  
+
   export default {
     props: {
       food: {
@@ -154,8 +155,10 @@
       }
     },
     filters: {
-      timeFormat (time) {
-        return moment(time).format('YYYY-MM-DD HH:mm')
+
+      formatTime (time) {
+        let date = new Date(time)
+        return formatTime(date, 'yyyy-MM-dd hh:mm')
       }
     },
     components: {
@@ -167,6 +170,7 @@
 </script>
 <style lang="stylus">
   @import "../../common/stylus/mixin.styl"
+
   .food
     position: fixed
     left: 0
@@ -280,8 +284,10 @@
         border-1px(rgba(7, 17, 27, .1))
         .user
           position: absolute
-          top: 16px
           right: 0
+          top: 16px
+          line-height: 12px
+          font-size: 0
           .name
             display: inline-block
             vertical-align: top
@@ -291,19 +297,24 @@
           .avatar
             border-radius: 50%
         .time
+          margin-bottom: 6px
+          line-height: 12px
           font-size: 10px
           color: rgb(147, 153, 159)
-          line-height: 12px
         .text
+          line-height: 16px
           font-size: 12px
           color: rgb(7, 17, 27)
-          line-height: 16px
           .icon-thumb_up, .icon-thumb_down
-            font-size: 12px
+            margin-right: 4px
             line-height: 24px
-            padding-right: 4px
+            font-size: 12px
           .icon-thumb_up
             color: rgb(0, 160, 220)
           .icon-thumb_down
             color: rgb(147, 153, 159)
+      .no-rating
+        padding: 16px
+        font-size: 12px
+        color: rgb(147, 153, 159)
 </style>
