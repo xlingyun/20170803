@@ -172,6 +172,7 @@
     },
     methods: {
       drop (el) {
+        console.log(this.balls.length)
         for (let i = 0; i < this.balls.length; i++) {
           let ball = this.balls[i]
           if (!ball.show) {

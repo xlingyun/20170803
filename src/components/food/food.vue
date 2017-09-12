@@ -39,6 +39,8 @@
         <div class="rating">
           <h1 class="title">商品评价</h1>
           <ratingselect
+            @select="selectRating"
+            @toggle="toggleContent"
             :selectType="selectType"
             :onlyContent="onlyContent"
             :desc="desc"
@@ -46,8 +48,9 @@
           ></ratingselect>
         </div>
         <div class="rating-wrapper">
-          <ul v-show="food.ratings && food.rating.length">
+          <ul v-show="food.ratings && food.ratings.length">
             <li v-for="rating in food.ratings"
+                v-show="needShow(rating.rateType, rating.text)"
                 class="rating-item">
               <div class="user">
                 <span class="name">{{rating.username}}</span>
@@ -56,13 +59,16 @@
                      height="12"
                      :src="rating.avatar">
               </div>
+              <div class="time">{{rating.rateTime | timeFormat}}</div>
               <p class="text">
-                <span :class="{'icon-thumb_up': rating.rateType===0, 'icon-thumb_down': rating.rateType===1}"></span>
+                <span
+                  :class="{'icon-thumb_up': rating.rateType===0, 'icon-thumb_down': rating.rateType===1}"></span>{{rating.text}}
               </p>
             </li>
           </ul>
           <div class="no-rating"
-               v-show="!food.ratings || !food.ratings.length"></div>
+               v-show="!food.ratings || !food.ratings.length">暂无评价
+          </div>
         </div>
       </div>
     </div>
@@ -74,6 +80,7 @@
   import Vue from 'vue'
   import split from 'components/split/split'
   import ratingselect from 'components/ratingselect/ratingselect'
+  import moment from 'moment'
   
   const ALL = 2
   
@@ -101,15 +108,12 @@
         this.selectType = ALL
         this.onlyContent = true
         this.$nextTick(() => {
-          console.log('ok')
           if (!this.scroll) {
-            console.log(this.$refs.food)
             this.scroll = new BScroll(this.$refs.food, {
               click: true
             })
           } else {
             this.scroll.refresh()
-            console.log('error')
           }
         })
       },
@@ -125,6 +129,33 @@
       },
       addFood (target) {
         this.$emit('add', target)
+      },
+      selectRating (type) {
+        this.selectType = type
+        this.$nextTick(() => {
+          this.scroll.refresh()
+        })
+      },
+      toggleContent () {
+        this.onlyContent = !this.onlyContent
+        this.$nextTick(() => {
+          this.scroll.refresh()
+        })
+      },
+      needShow (type, text) {
+        if (this.onlyContent && !text) {
+          return false
+        }
+        if (this.selectType === ALL) {
+          return true
+        } else {
+          return type === this.selectType
+        }
+      }
+    },
+    filters: {
+      timeFormat (time) {
+        return moment(time).format('YYYY-MM-DD HH:mm')
       }
     },
     components: {
@@ -135,6 +166,7 @@
   }
 </script>
 <style lang="stylus">
+  @import "../../common/stylus/mixin.styl"
   .food
     position: fixed
     left: 0
@@ -240,4 +272,38 @@
         margin-left: 18px
         font-size: 14px
         color: rgb(7, 17, 27)
+    .rating-wrapper
+      padding: 0 18px;
+      .rating-item
+        position: relative
+        padding: 16px 0
+        border-1px(rgba(7, 17, 27, .1))
+        .user
+          position: absolute
+          top: 16px
+          right: 0
+          .name
+            display: inline-block
+            vertical-align: top
+            margin-right: 6px
+            font-size: 10px
+            color: rgb(147, 153, 159)
+          .avatar
+            border-radius: 50%
+        .time
+          font-size: 10px
+          color: rgb(147, 153, 159)
+          line-height: 12px
+        .text
+          font-size: 12px
+          color: rgb(7, 17, 27)
+          line-height: 16px
+          .icon-thumb_up, .icon-thumb_down
+            font-size: 12px
+            line-height: 24px
+            padding-right: 4px
+          .icon-thumb_up
+            color: rgb(0, 160, 220)
+          .icon-thumb_down
+            color: rgb(147, 153, 159)
 </style>

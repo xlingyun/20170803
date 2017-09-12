@@ -39,7 +39,7 @@
                   <span class="now"><i class="money">¥</i>{{food.price}}</span>
                   <span v-if="food.oldPrice"
                         class="old"
-                        >¥{{food.oldPrice}}</span>
+                  >¥{{food.oldPrice}}</span>
                 </div>
                 <div class="cartcontrol-wrapper">
                   <cartcontrol @add="addFood" :food="food"></cartcontrol>
@@ -54,7 +54,7 @@
               :selectFoods="selectFoods"
               :delivery-price="seller.deliveryPrice"
               :min-price="seller.minPrice"
-              ></shopcart>
+    ></shopcart>
     <food @add="addFood"
           :food="selectedFood"
           ref="food"></food>
@@ -66,9 +66,9 @@
   import shopcart from 'components/shopcart/shopcart'
   import cartcontrol from 'components/cartcontrol/cartcontrol'
   import food from 'components/food/food'
-
+  
   const ERR_OK = 0
-
+  
   export default {
     props: {
       seller: {
@@ -88,7 +88,6 @@
         for (let i = 0; i < this.listHeight.length; i++) {
           let height1 = this.listHeight[i]
           let height2 = this.listHeight[i + 1]
-
           if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
             return i
           }
@@ -159,7 +158,6 @@
           click: true,
           probeType: 3
         })
-
         this.foodsScroll.on('scroll', (pos) => {
           this.scrollY = Math.abs(Math.round(pos.y))
         })
@@ -168,7 +166,6 @@
         let foodList = this.$refs.foodList
         let height = 0
         this.listHeight.push(height)
-
         for (let i = 0; i < foodList.length; i++) {
           let item = foodList[i]
           height += item.clientHeight
@@ -235,7 +232,7 @@
           font-size: 12px
           font-weight: 200
           border-1px(rgba(7, 17, 27, .1))
-
+    
     .foods-wrapper
       flex: 1
       .title

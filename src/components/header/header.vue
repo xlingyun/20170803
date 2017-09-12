@@ -37,22 +37,14 @@
             <div class="star-wrapper">
               <star :size="36" :score="seller.score"></star>
             </div>
-            <div class="title">
-              <div class="line"></div>
-              <div class="text">优惠信息</div>
-              <div class="line"></div>
-            </div>
+            <headline :headline=offers></headline>
             <ul v-if="seller.supports" class="supports">
               <li class="support-item" v-for="item in seller.supports">
                 <span class="icon" :class="classMap[item.type]"></span>
                 <span class="text">{{item.description}}</span>
               </li>
             </ul>
-            <div class="title">
-              <div class="line"></div>
-              <div class="text">商家公告</div>
-              <div class="line"></div>
-            </div>
+            <headline :headline=merchant></headline>
             <div class="bulletin">
               <div class="content">
                 {{seller.bulletin}}
@@ -70,7 +62,7 @@
 
 <script type="text/ecmascript-6">
   import star from 'components/star/star'
-
+  import headline from 'components/headline/headline'
   export default {
     props: {
       seller: {
@@ -79,7 +71,19 @@
     },
     data () {
       return {
-        detailShow: false
+        detailShow: false,
+        discount: '优惠信息',
+        proclamation: '商家公告'
+      }
+    },
+    computed: {
+      offers () {
+        let discount = this.discount
+        return discount
+      },
+      merchant () {
+        let proclamation = this.proclamation
+        return proclamation
       }
     },
     methods: {
@@ -100,15 +104,16 @@
       ]
     },
     components: {
-      star
+      star,
+      headline
     }
   }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-
+  
   @import "../../common/stylus/mixin.styl";
-
+  
   .header
     position: relative
     overflow: hidden
@@ -251,18 +256,6 @@
             margin-top: 16px
             padding: 2px 0
             text-align: center
-          .title
-            display: flex
-            width: 80%
-            margin: 30px auto 24px
-            .line
-              flex: 1
-              position: relative
-              top: -6px
-              border-bottom: 1px solid rgba(255, 255, 255, .2)
-            .text
-              padding: 0 12px
-              font-size: 14px
           .supports
             width: 80%
             margin: 0 auto
@@ -292,7 +285,7 @@
                 height: 16px
                 line-height: 16px
                 vertical-align: top
-                margin-left:6px
+                margin-left: 6px
                 font-size: 12px
           .bulletin
             width: 80%
@@ -302,7 +295,7 @@
               font-size: 12px
               line-height: 24px
               font-weight: 200
-
+      
       .detail-close
         position: relative
         width: 32px
